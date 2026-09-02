@@ -1,8 +1,8 @@
 import { unified } from "unified";
 import remarkParse from "remark-parse";
 import remarkGfm from "remark-gfm";
-import type { Root, Table, TableRow, TableCell, Heading, Text, InlineCode } from "mdast";
-import { MockdownSchema, SchemaTable, SchemaColumn } from "@mockdown/schema";
+import type { Root, Table, TableRow, TableCell, Heading, Text } from "mdast";
+import type { MockdownSchema, SchemaTable, SchemaColumn } from "@mockdown/schema";
 import { inferSemanticType } from "./schema-inferrer";
 
 export async function parseTable(markdown: string): Promise<MockdownSchema> {

@@ -1,1 +1,104 @@
 @import "tailwindcss";
+
+@theme {
+  --font-sans: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-border: var(--border);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-destructive: var(--destructive);
+  --color-on-destructive: var(--on-destructive);
+  --color-warning: var(--warning);
+  --color-on-warning: var(--on-warning);
+  --color-success: var(--success);
+  --color-on-success: var(--on-success);
+  --color-info: var(--info);
+  --color-on-info: var(--on-info);
+
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-xl: 14px;
+  --radius-2xl: 18px;
+  --radius-full: 9999px;
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --accent: #f5f5f5;
+  --accent-foreground: #404040;
+  --border: #e5e5e5;
+  --muted: #e5e5e5;
+  --muted-foreground: #737373;
+  --primary: #1d4ed8;
+  --primary-foreground: #eff6ff;
+  --secondary: #15803d;
+  --secondary-foreground: #f0fdf4;
+  --destructive: #dc2626;
+  --on-destructive: #fef2f2;
+  --warning: #ea580c;
+  --on-warning: #fff7ed;
+  --success: #16a34a;
+  --on-success: #f0fdf4;
+  --info: #2563eb;
+  --on-info: #eff6ff;
+}
+
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ffffff;
+  --accent: #171717;
+  --accent-foreground: #d4d4d4;
+  --border: #262626;
+  --muted: #262626;
+  --muted-foreground: #a3a3a3;
+  --primary: #2563eb;
+  --primary-foreground: #eff6ff;
+  --secondary: #166534;
+  --secondary-foreground: #dcfce7;
+  --destructive: #b91c1c;
+  --on-destructive: #fee2e2;
+  --warning: #c2410c;
+  --on-warning: #ffedd5;
+  --success: #15803d;
+  --on-success: #dcfce7;
+  --info: #1d4ed8;
+  --on-info: #dbeafe;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted-foreground);
+}
+
+/* CodeMirror full height adjustments */
+.cm-editor {
+  height: 100% !important;
+  font-family: var(--font-mono) !important;
+  font-size: 13px !important;
+}
+.cm-scroller {
+  font-family: var(--font-mono) !important;
+  padding: 8px 0;
+}
