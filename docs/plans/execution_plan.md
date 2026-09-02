@@ -29,11 +29,11 @@
 - [x] Output valid TypeScript for a `seed.ts` file.
 
 ## Phase 3: Backend API (`apps/api`)
-- [ ] Set up Elysia routes for `/api/mock/:id` and `/api/v1/deploy`.
-- [ ] Integrate `@mockdown/schema` for validation.
-- [ ] Implement in-memory LRU cache / Redis connection for storing generated mock payloads.
-- [ ] Implement rate limiting.
-- [ ] Write integration tests for API endpoints.
+- [x] Set up Elysia routes for `/api/mock/:id` and `/api/v1/deploy`.
+- [x] Integrate `@mockdown/schema` for validation.
+- [x] Implement in-memory LRU cache / Redis connection for storing generated mock payloads.
+- [x] Implement rate limiting.
+- [x] Write integration tests for API endpoints.
 
 ## Phase 4: Frontend Web App (`apps/web`)
 - [ ] Set up global UI shell (Header, Layout, Split-Screen).
