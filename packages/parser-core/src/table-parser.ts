@@ -98,7 +98,7 @@ export async function parseTable(markdown: string): Promise<MockdownSchema> {
         columns.push({
           name: rawName.replace(/[^a-zA-Z0-9_]/g, ""),
           type: rawType,
-          semanticType: inferSemanticType(rawName),
+          semanticType: inferSemanticType(rawName, rawType),
           isPrimary: rawName.toLowerCase() === "id",
           isForeign,
           referenceTable,

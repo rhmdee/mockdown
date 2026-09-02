@@ -5,10 +5,11 @@
   import JsonViewer from "./lib/components/JsonViewer.svelte";
   import PrismaViewer from "./lib/components/PrismaViewer.svelte";
   import DeployCard from "./lib/components/DeployCard.svelte";
+  import TableBuilderSheet from "./lib/components/TableBuilderSheet.svelte";
   import { editorStore } from "./lib/stores/editorStore.svelte";
   import { mockDataStore } from "./lib/stores/mockDataStore.svelte";
   import { processMarkdown } from "./lib/services/parser-service";
-  import { Braces, Code2, CloudUpload } from "lucide-svelte";
+  import { Braces, Code2, CloudUpload, Sparkles } from "lucide-svelte";
 
   async function performGeneration(markdown: string, rowCount: number) {
     editorStore.setIsParsing(true);
@@ -34,7 +35,7 @@
     performGeneration(editorStore.markdown, editorStore.rowCount);
   });
 
-  // Trigger generation ONLY when user clicks "Generate Mock" or changes row count
+  // Trigger generation ONLY when user clicks "Generate Mock" or changes row count or inserts table
   $effect(() => {
     const _trigger = editorStore.generationCount;
 
@@ -44,7 +45,7 @@
   });
 </script>
 
-<main class="w-screen h-screen p-2 gap-1.5 bg-accent overflow-hidden flex flex-col selection:bg-primary/20">
+<main class="w-screen h-screen p-2 gap-1.5 bg-accent overflow-hidden flex flex-col selection:bg-primary/20 relative">
   <!-- Header Shell -->
   <Header />
 
@@ -84,6 +85,19 @@
             <span>Mock API</span>
           </button>
         </div>
+
+        <!-- Generate Button (Far Right in Preview Header) -->
+        <div class="flex items-center gap-2">
+          <button
+            onclick={() => editorStore.triggerGenerate()}
+            disabled={editorStore.isParsing}
+            class="h-7 px-3 rounded-lg bg-primary text-primary-foreground text-xs font-semibold flex items-center gap-1.5 shadow-xs hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
+            title="Generate mock data from markdown"
+          >
+            <Sparkles class="size-3" />
+            <span>Generate Mock</span>
+          </button>
+        </div>
       </div>
 
       <!-- Tab Content Area -->
@@ -98,4 +112,7 @@
       </div>
     </div>
   </div>
+
+  <!-- Left Side Sheet: Quick Table Builder -->
+  <TableBuilderSheet />
 </main>

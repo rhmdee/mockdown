@@ -5,7 +5,7 @@
   import { markdown } from "@codemirror/lang-markdown";
   import { oneDark } from "@codemirror/theme-one-dark";
   import { editorStore, DEFAULT_MARKDOWN } from "../stores/editorStore.svelte";
-  import { FileText, RotateCcw, Sparkles } from "lucide-svelte";
+  import { FileText, RotateCcw, Sparkles, PlusSquare } from "lucide-svelte";
 
   let editorElement: HTMLDivElement;
   let view: EditorView | null = null;
@@ -56,13 +56,18 @@
     };
   });
 
-  function resetSample() {
-    editorStore.setMarkdown(DEFAULT_MARKDOWN);
-    if (view) {
+  // Sync external markdown updates (e.g. from Table Builder insertion or Reset) to CodeMirror
+  $effect(() => {
+    const currentMd = editorStore.markdown;
+    if (view && view.state.doc.toString() !== currentMd) {
       view.dispatch({
-        changes: { from: 0, to: view.state.doc.length, insert: DEFAULT_MARKDOWN }
+        changes: { from: 0, to: view.state.doc.length, insert: currentMd }
       });
     }
+  });
+
+  function resetSample() {
+    editorStore.setMarkdown(DEFAULT_MARKDOWN);
   }
 </script>
 
@@ -84,14 +89,14 @@
         <span>Reset Sample</span>
       </button>
 
+      <!-- Table Builder Trigger Button (Styled with Primary Accent) -->
       <button
-        onclick={() => editorStore.triggerGenerate()}
-        disabled={editorStore.isParsing}
-        class="h-7 px-3 rounded-lg bg-primary text-primary-foreground text-xs font-semibold flex items-center gap-1.5 shadow-xs hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
-        title="Generate mock data from markdown"
+        onclick={() => editorStore.openTableBuilder()}
+        class="h-7 px-3 rounded-lg bg-primary text-primary-foreground text-xs font-semibold flex items-center gap-1.5 shadow-xs hover:bg-primary/90 transition-all cursor-pointer"
+        title="Open Table Builder Sheet"
       >
-        <Sparkles class="size-3" />
-        <span>Generate Mock</span>
+        <PlusSquare class="size-3.5" />
+        <span>Table builder</span>
       </button>
     </div>
   </div>

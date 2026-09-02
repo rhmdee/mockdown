@@ -26,6 +26,7 @@ class EditorStore {
   isParsing = $state<boolean>(false);
   rowCount = $state<number>(5);
   generationCount = $state<number>(0);
+  isTableBuilderOpen = $state<boolean>(false);
 
   setMarkdown(text: string) {
     this.markdown = text;
@@ -41,6 +42,24 @@ class EditorStore {
 
   triggerGenerate() {
     this.generationCount += 1;
+  }
+
+  openTableBuilder() {
+    this.isTableBuilderOpen = true;
+  }
+
+  closeTableBuilder() {
+    this.isTableBuilderOpen = false;
+  }
+
+  appendTableMarkdown(tableMarkdown: string) {
+    const current = this.markdown.trim();
+    if (!current) {
+      this.markdown = tableMarkdown.trim() + "\n";
+    } else {
+      this.markdown = current + "\n\n" + tableMarkdown.trim() + "\n";
+    }
+    this.triggerGenerate();
   }
 }
 
