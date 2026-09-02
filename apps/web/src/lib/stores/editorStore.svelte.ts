@@ -25,6 +25,7 @@ class EditorStore {
   markdown = $state<string>(DEFAULT_MARKDOWN);
   isParsing = $state<boolean>(false);
   rowCount = $state<number>(5);
+  generationCount = $state<number>(0);
 
   setMarkdown(text: string) {
     this.markdown = text;
@@ -36,6 +37,10 @@ class EditorStore {
 
   setIsParsing(status: boolean) {
     this.isParsing = status;
+  }
+
+  triggerGenerate() {
+    this.generationCount += 1;
   }
 }
 

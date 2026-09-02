@@ -5,7 +5,7 @@
   import { markdown } from "@codemirror/lang-markdown";
   import { oneDark } from "@codemirror/theme-one-dark";
   import { editorStore, DEFAULT_MARKDOWN } from "../stores/editorStore.svelte";
-  import { FileText, RotateCcw } from "lucide-svelte";
+  import { FileText, RotateCcw, Sparkles } from "lucide-svelte";
 
   let editorElement: HTMLDivElement;
   let view: EditorView | null = null;
@@ -82,6 +82,16 @@
       >
         <RotateCcw class="size-3" />
         <span>Reset Sample</span>
+      </button>
+
+      <button
+        onclick={() => editorStore.triggerGenerate()}
+        disabled={editorStore.isParsing}
+        class="h-7 px-3 rounded-lg bg-primary text-primary-foreground text-xs font-semibold flex items-center gap-1.5 shadow-xs hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
+        title="Generate mock data from markdown"
+      >
+        <Sparkles class="size-3" />
+        <span>Generate Mock</span>
       </button>
     </div>
   </div>

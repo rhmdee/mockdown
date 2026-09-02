@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount, onDestroy } from "svelte";
+  import { onMount, untrack } from "svelte";
   import Header from "./lib/components/Header.svelte";
   import Editor from "./lib/components/Editor.svelte";
   import JsonViewer from "./lib/components/JsonViewer.svelte";
@@ -7,48 +7,40 @@
   import DeployCard from "./lib/components/DeployCard.svelte";
   import { editorStore } from "./lib/stores/editorStore.svelte";
   import { mockDataStore } from "./lib/stores/mockDataStore.svelte";
+  import { processMarkdown } from "./lib/services/parser-service";
   import { Braces, Code2, CloudUpload } from "lucide-svelte";
 
-  let worker: Worker | null = null;
-  let debounceTimeout: any = null;
-
-  onMount(() => {
-    // Initialize Web Worker
-    worker = new Worker(new URL("./lib/workers/parser.worker.ts", import.meta.url), {
-      type: "module"
-    });
-
-    worker.onmessage = (e: MessageEvent) => {
-      editorStore.setIsParsing(false);
-      if (e.data.success) {
-        mockDataStore.setData(e.data.schema, e.data.mockData, e.data.prismaSeed);
-      }
-    };
-
-    // Initial parse trigger
-    triggerParse(editorStore.markdown, editorStore.rowCount);
-  });
-
-  onDestroy(() => {
-    worker?.terminate();
-    if (debounceTimeout) clearTimeout(debounceTimeout);
-  });
-
-  function triggerParse(markdown: string, rowCount: number) {
-    if (!worker) return;
+  async function performGeneration(markdown: string, rowCount: number) {
     editorStore.setIsParsing(true);
-    if (debounceTimeout) clearTimeout(debounceTimeout);
+    const startTime = Date.now();
 
-    debounceTimeout = setTimeout(() => {
-      worker?.postMessage({ markdown, rowCount });
-    }, 200);
+    try {
+      const result = await processMarkdown(markdown, rowCount);
+      // Give a smooth 150ms micro-transition for the animated preview
+      const elapsed = Date.now() - startTime;
+      if (elapsed < 150) {
+        await new Promise((resolve) => setTimeout(resolve, 150 - elapsed));
+      }
+      mockDataStore.setData(result.schema, result.mockData, result.prismaSeed);
+    } catch (err) {
+      console.error("Parsing error:", err);
+    } finally {
+      editorStore.setIsParsing(false);
+    }
   }
 
-  // React to markdown or row count changes
+  onMount(() => {
+    // Initial generation on page load
+    performGeneration(editorStore.markdown, editorStore.rowCount);
+  });
+
+  // Trigger generation ONLY when user clicks "Generate Mock" or changes row count
   $effect(() => {
-    const md = editorStore.markdown;
-    const rc = editorStore.rowCount;
-    triggerParse(md, rc);
+    const _trigger = editorStore.generationCount;
+
+    untrack(() => {
+      performGeneration(editorStore.markdown, editorStore.rowCount);
+    });
   });
 </script>
 
