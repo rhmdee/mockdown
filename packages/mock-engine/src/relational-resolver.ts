@@ -1,4 +1,4 @@
-import { MockdownSchema, SchemaTable } from '@mockdown/schema';
+import type { MockdownSchema, SchemaTable } from '@mockdown/schema';
 
 export function resolveDependencies(schema: MockdownSchema): SchemaTable[] {
   const graph = new Map<string, string[]>();

@@ -36,15 +36,15 @@
 - [x] Write integration tests for API endpoints.
 
 ## Phase 4: Frontend Web App (`apps/web`)
-- [ ] Set up global UI shell (Header, Layout, Split-Screen).
-- [ ] Implement Markdown Code Editor using CodeMirror 6.
-- [ ] Set up Web Worker for non-blocking AST parsing & generation.
-- [ ] Implement Right Panel (Preview):
-  - JSON Viewer component.
-  - Prisma Seeder Viewer component.
-  - Mock API Card / Deployment flow.
-- [ ] State Management using Svelte 5 Runes (e.g., `editorStore.svelte.ts`, `mockDataStore.svelte.ts`).
-- [ ] Polish UI with Tailwind CSS (soft rounded corners, glassmorphism, dark mode).
+- [x] Set up global UI shell (Header, Layout, Split-Screen).
+- [x] Implement Markdown Code Editor using CodeMirror 6.
+- [x] Set up Web Worker for non-blocking AST parsing & generation.
+- [x] Implement Right Panel (Preview):
+  - [x] JSON Viewer component.
+  - [x] Prisma Seeder Viewer component.
+  - [x] Mock API Card / Deployment flow.
+- [x] State Management using Svelte 5 Runes (e.g., `editorStore.svelte.ts`, `mockDataStore.svelte.ts`).
+- [x] Polish UI with Tailwind CSS (soft rounded corners, glassmorphism, dark mode).
 
 ## Phase 5: Testing, Polish, and Deployment
 - [ ] E2E testing for the main user flow.

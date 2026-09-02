@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { SemanticType, SchemaColumn } from '@mockdown/schema';
+import { SemanticType, type SchemaColumn } from '@mockdown/schema';
 
 export function generateValueForColumn(column: SchemaColumn): any {
   switch (column.semanticType) {
