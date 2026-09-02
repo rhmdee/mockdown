@@ -1,0 +1,9 @@
+{
+  "extends": "./base.json",
+  "compilerOptions": {
+    "moduleResolution": "bundler",
+    "allowJs": true,
+    "checkJs": true,
+    "isolatedModules": true
+  }
+}
