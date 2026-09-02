@@ -1,0 +1,34 @@
+# Dependencies
+node_modules
+.pnpm-store
+bun.lockb
+
+# Build Outputs
+dist
+build
+.svelte-kit
+.turbo
+
+# Environment Variables
+.env
+.env.*
+!.env.example
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# System & IDE
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
