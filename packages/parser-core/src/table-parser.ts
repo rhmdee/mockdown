@@ -4,15 +4,33 @@ import remarkGfm from "remark-gfm";
 import type { Root, Table, TableRow, TableCell, Heading, Text } from "mdast";
 import type { MockdownSchema, SchemaTable, SchemaColumn } from "@mockdown/schema";
 import { inferSemanticType } from "./schema-inferrer";
+import { parsePrismaSchema } from "./prisma-parser";
+import { parseMermaidERD } from "./mermaid-parser";
+
+const processor = unified().use(remarkParse).use(remarkGfm);
 
 export async function parseTable(markdown: string): Promise<MockdownSchema> {
-  const file = await unified()
-    .use(remarkParse)
-    .use(remarkGfm)
-    .parse(markdown);
-
-  const root = file as Root;
   const schema: MockdownSchema = { tables: [] };
+  const rawText = markdown || "";
+
+  // 1. Check for Prisma Schema models (either in ```prisma code blocks or raw)
+  if (rawText.includes("model ") && rawText.includes("{")) {
+    const prismaSchema = parsePrismaSchema(rawText);
+    if (prismaSchema.tables.length > 0) {
+      schema.tables.push(...prismaSchema.tables);
+    }
+  }
+
+  // 2. Check for Mermaid ERD (either in ```mermaid code blocks or raw)
+  if (rawText.toLowerCase().includes("erdiagram") || (rawText.includes("||--") && rawText.includes("{"))) {
+    const mermaidSchema = parseMermaidERD(rawText);
+    if (mermaidSchema.tables.length > 0) {
+      schema.tables.push(...mermaidSchema.tables);
+    }
+  }
+
+  // 3. Parse Markdown Tables via AST
+  const root = processor.parse(rawText) as Root;
   
   let currentHeading = "Entity_1";
   let entityIndex = 1;
@@ -29,25 +47,34 @@ export async function parseTable(markdown: string): Promise<MockdownSchema> {
     } else if (node.type === "table") {
       const tableNode = node as Table;
       
-      if (tableNode.children.length < 1) continue; // Need at least header
+      if (tableNode.children.length < 2) continue; // Need at least header + 1 data row
 
       const headerRow = tableNode.children[0] as TableRow;
       const columns: SchemaColumn[] = [];
 
-      // We assume first column is Name, second is Type based on standard PRD format.
-      // But let's just parse the actual header values to be sure, or simply map rows.
-      // Usually, a data dictionary table has columns like: Field Name | Data Type | Description
-      // We will look for standard column indices or just assume: 
-      // col 0 = name, col 1 = type (if available)
-
       let nameIndex = 0;
       let typeIndex = 1;
+      let hasRecognizedHeader = false;
 
       headerRow.children.forEach((cell: TableCell, index: number) => {
         const text = getCellText(cell).toLowerCase();
-        if (text.includes("name") || text.includes("field")) nameIndex = index;
-        if (text.includes("type")) typeIndex = index;
+        if (text.includes("name") || text.includes("field") || text.includes("kolom") || text.includes("atribut") || text.includes("column")) {
+          nameIndex = index;
+          hasRecognizedHeader = true;
+        }
+        if (text.includes("type") || text.includes("tipe") || text.includes("data type") || text.includes("format")) {
+          typeIndex = index;
+          hasRecognizedHeader = true;
+        }
       });
+
+      // If this table is clearly a non-database table (e.g. Roadmap table with Week / Deliverables) and Prisma/Mermaid models are already present, skip it
+      const headerTexts = headerRow.children.map(getCellText).join(" ").toLowerCase();
+      const isRoadmapOrMetaTable = headerTexts.includes("week") || headerTexts.includes("deliverable") || headerTexts.includes("milestone") || headerTexts.includes("persona");
+
+      if (isRoadmapOrMetaTable && schema.tables.length > 0) {
+        continue;
+      }
 
       // Parse body rows
       for (let j = 1; j < tableNode.children.length; j++) {
@@ -60,14 +87,12 @@ export async function parseTable(markdown: string): Promise<MockdownSchema> {
 
         if (!rawName.trim()) continue;
 
-        // Parse foreign key (naive approach: if type contains reference to another table)
-        // e.g. "User ID" or "ref: User"
         let isForeign = false;
         let referenceTable = undefined;
         let referenceColumn = undefined;
 
-        if (rawName.toLowerCase().endsWith("_id") || rawName.toLowerCase().endsWith("id")) {
-           // We might consider it foreign if it matches another table, but we will leave this logic to the resolver.
+        if (rawName.toLowerCase().endsWith("_id") || (rawName.toLowerCase().endsWith("id") && rawName.toLowerCase() !== "id")) {
+          // Will be resolved in mock-engine
         }
 
         columns.push({
@@ -81,13 +106,15 @@ export async function parseTable(markdown: string): Promise<MockdownSchema> {
         });
       }
 
-      schema.tables.push({
-        name: currentHeading,
-        columns
-      });
+      if (columns.length > 0 && !isRoadmapOrMetaTable) {
+        schema.tables.push({
+          name: currentHeading,
+          columns
+        });
 
-      entityIndex++;
-      currentHeading = `Entity_${entityIndex}`; // Reset for next table
+        entityIndex++;
+        currentHeading = `Entity_${entityIndex}`;
+      }
     }
   }
 

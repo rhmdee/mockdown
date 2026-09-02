@@ -1,20 +1,13 @@
-import { parseTable } from "@mockdown/parser-core";
-import { generateMockData } from "@mockdown/mock-engine";
-import { generatePrismaSeed } from "@mockdown/prisma-generator";
+import { processMarkdown } from "../services/parser-service";
 
 self.onmessage = async (e: MessageEvent<{ markdown: string; rowCount: number }>) => {
   const { markdown, rowCount } = e.data;
 
   try {
-    const schema = await parseTable(markdown || "");
-    const mockData = generateMockData(schema, rowCount || 5);
-    const prismaSeed = generatePrismaSeed(schema, mockData);
-
+    const result = await processMarkdown(markdown, rowCount);
     self.postMessage({
       success: true,
-      schema,
-      mockData,
-      prismaSeed
+      ...result
     });
   } catch (err: any) {
     self.postMessage({
