@@ -47,7 +47,7 @@
 - [x] Polish UI with Tailwind CSS (soft rounded corners, glassmorphism, dark mode).
 
 ## Phase 5: Testing, Polish, and Deployment
-- [ ] E2E testing for the main user flow.
-- [ ] UI/UX polish and micro-interactions.
-- [ ] Deploy `apps/web` to Vercel/Cloudflare.
-- [ ] Deploy `apps/api` to Fly.io/Railway.
+- [x] E2E testing for the main user flow.
+- [x] UI/UX polish and micro-interactions.
+- [x] Deploy `apps/web` to Vercel/Cloudflare.
+- [x] Deploy `apps/api` to Fly.io/Railway.
