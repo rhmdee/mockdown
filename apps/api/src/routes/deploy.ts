@@ -4,13 +4,15 @@ import { saveMockData } from "../services/cache-store";
 
 export const deployRoutes = new Elysia({ prefix: "/api/v1" }).post(
   "/deploy",
-  ({ body, request }) => {
+  ({ body, request, headers }) => {
     const payload = body as DeployMockPayload;
     const endpointId = crypto.randomUUID();
     const entry = saveMockData(endpointId, payload);
 
     const urlObj = new URL(request.url);
-    const baseUrl = `${urlObj.protocol}//${urlObj.host}`;
+    const proto = headers["x-forwarded-proto"] || urlObj.protocol.replace(':', '');
+    const host = headers["x-forwarded-host"] || headers["host"] || urlObj.host;
+    const baseUrl = `${proto}://${host}`;
     const mockUrl = `${baseUrl}/api/mock/${endpointId}`;
 
     const response: DeployMockResponse = {
